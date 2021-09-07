@@ -1,0 +1,55 @@
+
+
+<div *ngIf="loading">loading...</div>
+ 
+<div *ngIf="errorMessage" class="alert alert-warning">
+  <strong>Warning!</strong> {{errorMessage | json}}
+</div>
+
+<div *ngIf="episodes">
+  <div class="container"> 
+    <h1>{{ episodes.results[0].collectionName }}</h1>
+    <h2>{{ episodes.results[0].artistName }}</h2>
+    <h3>{{ episodes.resultCount - 1 }} episodes retrieved</h3>
+    <div class="row">
+      <div class="col"><hr/></div>
+    </div>   
+  </div>
+ 
+  <div class="container" *ngFor="let result of episodes.results.slice(1); let i = index;">     
+    <div class="row" style="display: flex">
+      <div class="col">
+          <a [routerLink]="['/snipdefine', result.trackId]" 
+             [state]="{ trackId: result.trackId, trackUrl: result.episodeUrl }">
+             <img class="episodeImage" src="{{ result.artworkUrl160 }}">
+          </a>
+      </div>
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <a [routerLink]="['/snipdefine', result.trackId]" 
+               [state]="{ trackId: result.trackId, 
+                          trackUrl: result.episodeUrl,
+                          artwork: result.artworkUrl600,
+                          description: result.description }">
+               <h3>{{ result.trackName }}</h3>
+            </a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h4>{{ result.trackId }}</h4>
+          </div>
+        </div>  
+        <div class="row">
+          <div class="col">
+            <h4>{{ result.description }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr/>
+  </div>
+</div>
+
+<!-- <pre>{{ episodes | json }}</pre> -->

@@ -1,0 +1,48 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <br/>
+  <div>
+    <label for="name">
+      podcast search
+    </label>
+    <input id="name" type="text" formControlName="name">
+  </div>
+
+  <button class="button" type="submit">Search</button>
+
+</form>
+
+<div *ngIf="loading">loading...</div>
+ 
+<div *ngIf="errorMessage" class="alert alert-warning">
+  <strong>Warning!</strong> {{errorMessage | json}}
+</div>
+
+<div *ngIf="podcasts">
+  <h3>{{ podcasts.resultCount }} results found</h3>
+  <br>
+  <div class="containerBlock" *ngFor="let result of podcasts.results;">  
+    <div class="row">
+      <div class="col">
+        <a [routerLink]="['/episodes', result.collectionId]"><img class="podcastImage" src="{{ result.artworkUrl600 }}"></a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a [routerLink]="['/episodes', result.collectionId]"><h3>{{ result.collectionName }}</h3></a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h4>{{ result.artistName }}</h4>
+      </div>
+    </div>
+     <div class="row">
+      <div class="col">
+        <h4>{{ result.collectionId }}</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col"><hr/></div>
+    </div>
+  </div>
+</div>

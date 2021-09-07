@@ -1,0 +1,17 @@
+
+{{ state | json }}
+<br/>
+<hr/>
+{{ trackId }}
+<br/>
+<hr/>
+{{ trackUrl }}
+<br/>
+<hr/>
+
+
+
+<audio id="player" controls>
+  <source id="player-source" src="{{ trackUrl }}" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>  
