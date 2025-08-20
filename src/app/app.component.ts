@@ -1,10 +1,15 @@
-import { Component, VERSION } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { TopBarComponent } from './top-bar/top-bar.component';
+import { SnipSaveComponent } from './snip-save/snip-save.component';
+import { SnipsSavedComponent } from './snips-saved/snips-saved.component';
 
 @Component({
-  selector: 'my-app',
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, TopBarComponent, SnipSaveComponent, SnipsSavedComponent],
   templateUrl: './app.component.html',
-  styleUrls: [ './app.component.css' ]
+  styleUrl: './app.component.css'
 })
-export class AppComponent  {
-
+export class AppComponent {
 }

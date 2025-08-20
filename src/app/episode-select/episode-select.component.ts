@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { JsonPipe, NgIf, NgFor } from '@angular/common';
 
 import { ITunesService } from '../itunes.service';
-import { Podcast } from '../podcast';
-import { Episode } from '../episode';
-import { Observable } from 'rxjs';
-import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { filter, map, tap } from 'rxjs/operators';
+import type { Episode } from '../episode';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-episode-select',
+  standalone: true,
+  imports: [RouterLink, JsonPipe, NgIf, NgFor],
   templateUrl: './episode-select.component.html',
   styleUrls: ['./episode-select.component.css']
 })
@@ -19,15 +20,14 @@ export class EpisodeSelectComponent implements OnInit {
       name: ''
   });
 
-  episodes: Episode;
+  episodes!: Episode;
   loading: boolean = false;
-  errorMessage;
+  errorMessage: any = '';
 
   constructor(
     private formBuilder: FormBuilder, 
     private iTunesService: ITunesService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) { 
 
   }
@@ -40,29 +40,28 @@ export class EpisodeSelectComponent implements OnInit {
     const routeParams = this.route.snapshot.paramMap;
     const collectionId = routeParams.get('collectionId');
 
-    this.getEpisodes(collectionId);
+    if (collectionId) {
+      this.getEpisodes(collectionId);
+    }
 
   }
 
-  public getEpisodes(collectionId) {
+  public getEpisodes(collectionId: string) {
     this.loading = true;
     this.errorMessage = "";
 
-    this.iTunesService.getEpisodes(collectionId)
-      .subscribe(
-        (response) => { 
-          this.episodes = response 
-          console.log(response);
-        },
-        (error) => {                          
-          console.error('Request failed with error')
-          this.errorMessage = error;
-          this.loading = false;
-        },
-        () => {                                  
-          console.log('Request completed')      
-          this.loading = false; 
-        })
+    this.iTunesService.getEpisodes(collectionId).subscribe({
+      next: (response) => { 
+        this.episodes = response;
+        console.log(response);
+        this.loading = false;
+      },
+      error: (error) => {                          
+        console.error('Request failed with error', error);
+        this.errorMessage = error;
+        this.loading = false;
+      }
+    })
   }
 
 }

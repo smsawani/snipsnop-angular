@@ -8,8 +8,8 @@
 
 <div *ngIf="episodes">
   <div class="container"> 
-    <h1>{{ episodes.results[0].collectionName }}</h1>
-    <h2>{{ episodes.results[0].artistName }}</h2>
+    <h1>{{ episodes.results?.[0]?.collectionName }}</h1>
+    <h2>{{ episodes.results?.[0]?.artistName }}</h2>
     <h3>{{ episodes.resultCount - 1 }} episodes retrieved</h3>
     <div class="row">
       <div class="col"><hr/></div>

@@ -1,52 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { ITunesService } from '../itunes.service';
-import { Podcast } from '../podcast';
+import type { Podcast } from '../podcast';
 
 @Component({
   selector: 'app-podcast-search',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './podcast-search.component.html',
-  styleUrls: ['./podcast-search.component.css']
+  styleUrl: './podcast-search.component.css'
 })
-export class PodcastSearchComponent implements OnInit {
+export class PodcastSearchComponent {
   searchForm = this.formBuilder.group({
     name: ''
   });
 
-  podcasts: Podcast;
-  loading: boolean = false;
-  errorMessage;
+  podcasts: Podcast | null = null;
+  loading = false;
+  errorMessage = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private iTunesService: ITunesService
   ) {}
 
-  ngOnInit() {}
 
   onSubmit(): void {
-    this.getPodcasts(this.searchForm.value.name);
+    const searchTerm = this.searchForm.value.name;
+    if (searchTerm) {
+      this.getPodcasts(searchTerm);
+    }
   }
 
-  public getPodcasts(searchTerm) {
+  public getPodcasts(searchTerm: string): void {
     this.loading = true;
     this.errorMessage = '';
 
-    this.iTunesService.getPodcasts(searchTerm).subscribe(
-      response => {
+    this.iTunesService.getPodcasts(searchTerm).subscribe({
+      next: (response) => {
         this.podcasts = response;
-        console.log(JSON.stringify(this.podcasts));
-      },
-      error => {
-        console.error('Request failed with error');
-        this.errorMessage = error;
         this.loading = false;
       },
-      () => {
-        console.log('Request completed');
+      error: (error) => {
+        console.error('Request failed with error', error);
+        this.errorMessage = 'Failed to search podcasts';
         this.loading = false;
       }
-    );
+    });
   }
 }

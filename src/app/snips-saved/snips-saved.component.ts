@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-snips-saved',
+  standalone: true,
   templateUrl: './snips-saved.component.html',
-  styleUrls: ['./snips-saved.component.css']
+  styleUrl: './snips-saved.component.css'
 })
-export class SnipsSavedComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class SnipsSavedComponent {
 }
