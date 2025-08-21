@@ -1,48 +1,45 @@
-<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
-  <br/>
-  <div>
-    <label for="name">
-      podcast search
-    </label>
-    <input id="name" type="text" formControlName="name">
+<div class="podcast-search-container">  
+  <div class="app-header">
+    <a [routerLink]="['/snips']" class="button fancy-button">
+      My Snips
+    </a>
   </div>
 
-  <button class="button" type="submit">Search</button>
+  <div class="search-form-wrapper">
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
+      <div class="search-input-group">        
+        <label for="name">Podcast Search</label>
+        <input 
+          id="name" 
+          type="text" 
+          formControlName="name"
+          placeholder="Enter podcast name..."
+          class="search-input"
+        />
+      </div>
+      <button class="button search-button" type="submit">Search</button>
+    </form>
+    
+    <div *ngIf="errorMessage" class="error-message">{{errorMessage}}</div>
+    
+    <div *ngIf="podcasts && podcasts.resultCount > 0" class="results-summary">
+      <span class="results-count">{{podcasts.resultCount}}</span> podcast{{podcasts.resultCount !== 1 ? 's' : ''}} found
+    </div>
+  </div>
 
-</form>
+  <div *ngIf="loading" class="results-summary">Searching...</div>
 
-<div *ngIf="loading">loading...</div>
- 
-<div *ngIf="errorMessage" class="alert alert-warning">
-  <strong>Warning!</strong> {{errorMessage | json}}
-</div>
-
-<div *ngIf="podcasts">
-  <h3>{{ podcasts.resultCount }} results found</h3>
-  <br>
-  <div class="containerBlock" *ngFor="let result of podcasts.results;">  
-    <div class="row">
-      <div class="col">
-        <a [routerLink]="['/episodes', result.collectionId]"><img class="podcastImage" src="{{ result.artworkUrl600 }}"></a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <a [routerLink]="['/episodes', result.collectionId]"><h3>{{ result.collectionName }}</h3></a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <h4>{{ result.artistName }}</h4>
-      </div>
-    </div>
-     <div class="row">
-      <div class="col">
-        <h4>{{ result.collectionId }}</h4>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col"><hr/></div>
+  <div *ngIf="podcasts" class="podcasts-grid">
+    <div *ngFor="let result of podcasts.results" class="podcast-card">
+      <a [routerLink]="['/episodes', result.collectionId]" class="podcast-link">
+        <div class="podcast-image-wrapper">
+          <img class="podcastImage" [src]="result.artworkUrl600" [alt]="result.collectionName">
+        </div>
+        <div class="podcast-info">
+          <h3 class="podcast-title">{{result.collectionName}}</h3>
+          <p class="podcast-artist">{{result.artistName}}</p>
+        </div>
+      </a>
     </div>
   </div>
 </div>

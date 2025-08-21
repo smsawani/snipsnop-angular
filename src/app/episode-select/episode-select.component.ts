@@ -1,7 +1,7 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { JsonPipe, NgIf, NgFor } from '@angular/common';
+import { JsonPipe, NgIf, NgFor, DatePipe } from '@angular/common';
 
 import { ITunesService } from '../itunes.service';
 import type { Episode } from '../episode';
@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-episode-select',
   standalone: true,
-  imports: [RouterLink, JsonPipe, NgIf, NgFor],
+  imports: [RouterLink, JsonPipe, NgIf, NgFor, DatePipe],
   templateUrl: './episode-select.component.html',
   styleUrls: ['./episode-select.component.css']
 })
