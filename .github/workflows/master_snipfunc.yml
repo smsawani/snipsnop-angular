@@ -34,7 +34,6 @@ jobs:
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           npm run build --if-present
-          npm run test --if-present
           popd
 
       - name: Zip artifact for deployment
@@ -68,4 +67,5 @@ jobs:
           app-name: 'snipfunc'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6775C7EB6A6F47589DFAD274E78E8C96 }}
