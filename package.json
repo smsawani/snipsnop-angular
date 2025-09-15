@@ -10,9 +10,14 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/platform-browser-dynamic": "^20.3.0",
+    "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@angular/ssr": "^20.3.1",
+    "@codegenie/serverless-express": "^4.17.0",
     "@popperjs/core": "^2.11.8",
+    "aws-serverless-express": "^3.4.0",
     "bootstrap": "^5.3.0",
+    "express": "^5.1.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.6.0",
     "zone.js": "^0.15.1"
@@ -26,7 +31,8 @@
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "analyze": "ng build --stats-json && npx webpack-bundle-analyzer dist/demo/stats.json"
+    "analyze": "ng build --stats-json && npx webpack-bundle-analyzer dist/demo/stats.json",
+    "serve:ssr:demo": "node dist/demo/server/server.mjs"
   },
   "devDependencies": {
     "@angular-eslint/builder": "^18.0.0",
@@ -37,8 +43,9 @@
     "@angular/build": "^20.3.1",
     "@angular/cli": "^20.3.1",
     "@angular/compiler-cli": "^20.3.0",
+    "@types/express": "^5.0.1",
     "@types/jasmine": "^5.1.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.17.19",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.57.0",
@@ -48,6 +55,11 @@
     "karma-coverage": "^2.2.0",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
+    "serverless": "^4.19.0",
+    "serverless-api-compression": "^1.0.1",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-associate-waf": "^1.2.1",
+    "serverless-offline": "^14.4.0",
     "typescript": "^5.9.2"
   }
 }

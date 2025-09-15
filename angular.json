@@ -29,7 +29,12 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "browser": "src/main.ts"
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "outputMode": "static",
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -105,7 +110,6 @@
       }
     }
   },
-  "defaultProject": "demo",
   "schematics": {
     "@schematics/angular:component": {
       "type": "component"
