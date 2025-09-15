@@ -51,7 +51,7 @@ jobs:
         with:
           app-name: snipsnop
           slot-name: Production
-          package: .
+          package: ./dist/demo
           publish-profile: ${{
             secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D255A813BA6541E9A3D4E2BC70A98D3F
             }}
