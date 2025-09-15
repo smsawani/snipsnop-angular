@@ -1,4 +1,4 @@
-<div class="podcast-search-container">  
+<div class="podcast-search-container">
   <div class="app-header">
     <a [routerLink]="['/snips']" class="button fancy-button">
       My Snips
@@ -7,39 +7,49 @@
 
   <div class="search-form-wrapper">
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
-      <div class="search-input-group">        
+      <div class="search-input-group">
         <label for="name">Podcast Search</label>
-        <input 
-          id="name" 
-          type="text" 
+        <input
+          id="name"
+          type="text"
           formControlName="name"
           placeholder="Enter podcast name..."
           class="search-input"
-        />
+          />
       </div>
       <button class="button search-button" type="submit">Search</button>
     </form>
-    
-    <div *ngIf="errorMessage" class="error-message">{{errorMessage}}</div>
-    
-    <div *ngIf="podcasts && podcasts.resultCount > 0" class="results-summary">
-      <span class="results-count">{{podcasts.resultCount}}</span> podcast{{podcasts.resultCount !== 1 ? 's' : ''}} found
-    </div>
+
+    @if (errorMessage) {
+      <div class="error-message">{{errorMessage}}</div>
+    }
+
+    @if (podcasts && podcasts.resultCount > 0) {
+      <div class="results-summary">
+        <span class="results-count">{{podcasts.resultCount}}</span> podcast{{podcasts.resultCount !== 1 ? 's' : ''}} found
+      </div>
+    }
   </div>
 
-  <div *ngIf="loading" class="results-summary">Searching...</div>
+  @if (loading) {
+    <div class="results-summary">Searching...</div>
+  }
 
-  <div *ngIf="podcasts" class="podcasts-grid">
-    <div *ngFor="let result of podcasts.results" class="podcast-card">
-      <a [routerLink]="['/episodes', result.collectionId]" class="podcast-link">
-        <div class="podcast-image-wrapper">
-          <img class="podcastImage" [src]="result.artworkUrl600" [alt]="result.collectionName">
+  @if (podcasts) {
+    <div class="podcasts-grid">
+      @for (result of podcasts.results; track result) {
+        <div class="podcast-card">
+          <a [routerLink]="['/episodes', result.collectionId]" class="podcast-link">
+            <div class="podcast-image-wrapper">
+              <img class="podcastImage" [src]="result.artworkUrl600" [alt]="result.collectionName">
+            </div>
+            <div class="podcast-info">
+              <h3 class="podcast-title">{{result.collectionName}}</h3>
+              <p class="podcast-artist">{{result.artistName}}</p>
+            </div>
+          </a>
         </div>
-        <div class="podcast-info">
-          <h3 class="podcast-title">{{result.collectionName}}</h3>
-          <p class="podcast-artist">{{result.artistName}}</p>
-        </div>
-      </a>
+      }
     </div>
-  </div>
+  }
 </div>

@@ -1,101 +1,109 @@
 <div class="snip-list-container">
   <audio #audioRef style="display: none;"></audio>
-  
+
   <div class="snip-list-header">
     <h1>My Snips</h1>
     <p class="snip-count">{{snips.length}} saved snip{{snips.length !== 1 ? 's' : ''}}</p>
   </div>
 
-  <div *ngIf="snips.length === 0" class="empty-state">
-    <h3>No snips saved yet</h3>
-    <p>Start by searching for podcasts and defining your first snip!</p>
-    <a [routerLink]="['/']" class="button">
-      Search Podcasts
-    </a>
-  </div>
-
-  <div *ngIf="snips.length > 0" class="snips-grid">
-    <div *ngFor="let snip of snips" class="snip-card">
-      <div class="snip-card-header">
-        <div class="snip-episode-info">
-          <img 
-            *ngIf="snip.episodeData?.artworkUrl" 
-            [src]="snip.episodeData.artworkUrl" 
-            [alt]="snip.episodeData.trackName" 
-            class="snip-artwork"
-          />
-          <div class="snip-text-info">
-            <h3 class="snip-episode-title">
-              {{snip.episodeData?.trackName || 'Unknown Episode'}}
-            </h3>
-            <p class="snip-podcast-name">
-              {{snip.episodeData?.collectionName || 'Unknown Podcast'}}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="snip-times">
-        <div class="snip-time-range">
-          <strong>Snip:</strong> {{snip.startTime || '--:--'}} - {{snip.endTime || '--:--'}}
-          <span *ngIf="calculateDuration(snip.startTime, snip.endTime) !== null" class="snip-duration">
-            ({{calculateDuration(snip.startTime, snip.endTime)}}s)
-          </span>
-        </div>
-        <div class="snip-saved-date">
-          Saved: {{formatDate(snip.lastModified)}}
-        </div>
-      </div>
-
-      <div *ngIf="snip.episodeData?.episodeUrl && snip.startTime && snip.endTime" class="snip-playback">
-        <div class="snip-controls">
-          <button 
-            [class]="'snip-play-button' + (isPlaying(snip) ? ' playing' : '')"
-            (click)="playSnip(snip)"
-            [title]="isPlaying(snip) ? 'Pause' : 'Play snip'"
-          >
-            {{isPlaying(snip) ? '⏸️' : '▶️'}}
-          </button>
-          
-          <button 
-            *ngIf="playingSnip?.trackId === snip.trackId"
-            class="snip-stop-button"
-            (click)="stopSnip()"
-            title="Stop"
-          >
-            ⏹️
-          </button>
-          
-          <span class="snip-controls-label">
-            {{isPlaying(snip) ? 'Playing snip...' : 'Play snip'}}
-          </span>
-        </div>
-        
-        <div *ngIf="playingSnip?.trackId === snip.trackId" class="snip-progress">
-          <div class="snip-progress-bar">
-            <div 
-              class="snip-progress-fill"
-              [style.width.%]="getPlaybackProgress(snip) * 100"
-            ></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="snip-actions">
-        <a 
-          [routerLink]="['/snipdefine', snip.trackId]" 
-          [state]="snip.episodeData"
-          class="button snip-edit-button"
-        >
-          Edit Snip
-        </a>
-        <button 
-          class="button snip-delete-button"
-          (click)="deleteSnip(snip.storageKey)"
-        >
-          Delete
-        </button>
-      </div>
+  @if (snips.length === 0) {
+    <div class="empty-state">
+      <h3>No snips saved yet</h3>
+      <p>Start by searching for podcasts and defining your first snip!</p>
+      <a [routerLink]="['/']" class="button">
+        Search Podcasts
+      </a>
     </div>
-  </div>
+  }
+
+  @if (snips.length > 0) {
+    <div class="snips-grid">
+      @for (snip of snips; track snip) {
+        <div class="snip-card">
+          <div class="snip-card-header">
+            <div class="snip-episode-info">
+              @if (snip.episodeData?.artworkUrl) {
+                <img
+                  [src]="snip.episodeData.artworkUrl"
+                  [alt]="snip.episodeData.trackName"
+                  class="snip-artwork"
+                  />
+              }
+              <div class="snip-text-info">
+                <h3 class="snip-episode-title">
+                  {{snip.episodeData?.trackName || 'Unknown Episode'}}
+                </h3>
+                <p class="snip-podcast-name">
+                  {{snip.episodeData?.collectionName || 'Unknown Podcast'}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="snip-times">
+            <div class="snip-time-range">
+              <strong>Snip:</strong> {{snip.startTime || '--:--'}} - {{snip.endTime || '--:--'}}
+              @if (calculateDuration(snip.startTime, snip.endTime) !== null) {
+                <span class="snip-duration">
+                  ({{calculateDuration(snip.startTime, snip.endTime)}}s)
+                </span>
+              }
+            </div>
+            <div class="snip-saved-date">
+              Saved: {{formatDate(snip.lastModified)}}
+            </div>
+          </div>
+          @if (snip.episodeData?.episodeUrl && snip.startTime && snip.endTime) {
+            <div class="snip-playback">
+              <div class="snip-controls">
+                <button
+                  [class]="'snip-play-button' + (isPlaying(snip) ? ' playing' : '')"
+                  (click)="playSnip(snip)"
+                  [title]="isPlaying(snip) ? 'Pause' : 'Play snip'"
+                  >
+                  {{isPlaying(snip) ? '⏸️' : '▶️'}}
+                </button>
+                @if (playingSnip?.trackId === snip.trackId) {
+                  <button
+                    class="snip-stop-button"
+                    (click)="stopSnip()"
+                    title="Stop"
+                    >
+                    ⏹️
+                  </button>
+                }
+                <span class="snip-controls-label">
+                  {{isPlaying(snip) ? 'Playing snip...' : 'Play snip'}}
+                </span>
+              </div>
+              @if (playingSnip?.trackId === snip.trackId) {
+                <div class="snip-progress">
+                  <div class="snip-progress-bar">
+                    <div
+                      class="snip-progress-fill"
+                      [style.width.%]="getPlaybackProgress(snip) * 100"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <div class="snip-actions">
+            <a
+              [routerLink]="['/snipdefine', snip.trackId]"
+              [state]="snip.episodeData"
+              class="button snip-edit-button"
+              >
+              Edit Snip
+            </a>
+            <button
+              class="button snip-delete-button"
+              (click)="deleteSnip(snip.storageKey)"
+              >
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>

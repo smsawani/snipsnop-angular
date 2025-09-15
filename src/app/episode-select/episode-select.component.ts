@@ -1,7 +1,7 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { JsonPipe, NgIf, NgFor, DatePipe } from '@angular/common';
+import { JsonPipe, DatePipe } from '@angular/common';
 
 import { ITunesService } from '../itunes.service';
 import type { Episode } from '../episode';
@@ -9,7 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-episode-select',
-    imports: [RouterLink, JsonPipe, NgIf, NgFor, DatePipe],
+    imports: [RouterLink, JsonPipe, DatePipe],
     templateUrl: './episode-select.component.html',
     styleUrls: ['./episode-select.component.css']
 })

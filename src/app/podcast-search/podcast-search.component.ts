@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 
 import { ITunesService } from '../itunes.service';
@@ -8,7 +8,7 @@ import type { Podcast } from '../podcast';
 
 @Component({
     selector: 'app-podcast-search',
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
+    imports: [ReactiveFormsModule, RouterModule],
     templateUrl: './podcast-search.component.html',
     styleUrl: './podcast-search.component.css'
 })
