@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, type OnInit, type OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 
 interface SnipData {
@@ -13,7 +13,7 @@ interface SnipData {
 
 @Component({
     selector: 'app-snips-saved',
-    imports: [CommonModule, RouterModule],
+    imports: [RouterModule],
     templateUrl: './snips-saved.component.html',
     styleUrl: './snips-saved.component.css'
 })

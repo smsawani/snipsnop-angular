@@ -21,7 +21,7 @@ export class SnipDefineComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) { 
-    this.episodeData = this.router.getCurrentNavigation()?.extras.state || {};
+    this.episodeData = this.router.currentNavigation()?.extras.state || {};
   }
 
   ngOnInit() {

@@ -14,16 +14,18 @@
     <p class="podcast-name">{{episodeData.collectionName || 'Unknown Podcast'}}</p>
   </div>
 
-  <div class="audio-player-section" *ngIf="episodeData.episodeUrl">
-    <audio id="player" controls class="audio-player">
-      <source id="player-source" [src]="episodeData.episodeUrl" type="audio/mpeg"/>
-      Your browser does not support the audio element.
-    </audio>
-  </div>
+  @if (episodeData.episodeUrl) {
+    <div class="audio-player-section">
+      <audio id="player" controls class="audio-player">
+        <source id="player-source" [src]="episodeData.episodeUrl" type="audio/mpeg"/>
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  }
 
   <div class="time-inputs-section">
     <h3>Define Snip Times</h3>
-    
+
     <div class="time-input-group">
       <div class="time-input-field">
         <label for="start-time">Start Time</label>
@@ -34,7 +36,7 @@
           (ngModelChange)="onStartTimeChange()"
           placeholder="MM:SS or HH:MM:SS"
           class="time-input"
-        />
+          />
       </div>
 
       <div class="time-input-field">
@@ -46,30 +48,34 @@
           (ngModelChange)="onEndTimeChange()"
           placeholder="MM:SS or HH:MM:SS"
           class="time-input"
-        />
+          />
       </div>
     </div>
 
     <div class="save-button-container">
-      <button 
-        type="button" 
+      <button
+        type="button"
         [class]="'button save-button' + (isSaved ? ' saved' : '')"
         (click)="handleSave()"
         [disabled]="!startTime && !endTime"
-      >
+        >
         {{isSaved ? 'Saved ✓' : 'Save Snip Times'}}
       </button>
     </div>
 
-    <div *ngIf="startTime || endTime" class="snip-summary">
-      <h4>Current Snip</h4>
-      <p>
-        <strong>Duration:</strong> {{startTime || '--:--'}} - {{endTime || '--:--'}}
-        <span *ngIf="getDuration() !== null" class="duration-calc">
-          ({{getDuration()}}s)
-        </span>
-      </p>
-    </div>
+    @if (startTime || endTime) {
+      <div class="snip-summary">
+        <h4>Current Snip</h4>
+        <p>
+          <strong>Duration:</strong> {{startTime || '--:--'}} - {{endTime || '--:--'}}
+          @if (getDuration() !== null) {
+            <span class="duration-calc">
+              ({{getDuration()}}s)
+            </span>
+          }
+        </p>
+      </div>
+    }
   </div>
 
   <div class="debug-section">
