@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-snip-define',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './snip-define.component.html',
-  styleUrls: ['./snip-define.component.css']
+    selector: 'app-snip-define',
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './snip-define.component.html',
+    styleUrls: ['./snip-define.component.css']
 })
 export class SnipDefineComponent implements OnInit {
 

@@ -12,11 +12,10 @@ interface SnipData {
 }
 
 @Component({
-  selector: 'app-snips-saved',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './snips-saved.component.html',
-  styleUrl: './snips-saved.component.css'
+    selector: 'app-snips-saved',
+    imports: [CommonModule, RouterModule],
+    templateUrl: './snips-saved.component.html',
+    styleUrl: './snips-saved.component.css'
 })
 export class SnipsSavedComponent implements OnInit, OnDestroy {
   @ViewChild('audioRef', { static: false }) audioRef!: ElementRef<HTMLAudioElement>;

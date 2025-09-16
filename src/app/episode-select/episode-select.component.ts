@@ -8,11 +8,10 @@ import type { Episode } from '../episode';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-episode-select',
-  standalone: true,
-  imports: [RouterLink, JsonPipe, NgIf, NgFor, DatePipe],
-  templateUrl: './episode-select.component.html',
-  styleUrls: ['./episode-select.component.css']
+    selector: 'app-episode-select',
+    imports: [RouterLink, JsonPipe, NgIf, NgFor, DatePipe],
+    templateUrl: './episode-select.component.html',
+    styleUrls: ['./episode-select.component.css']
 })
 export class EpisodeSelectComponent implements OnInit {
 
