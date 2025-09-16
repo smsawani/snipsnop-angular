@@ -1,15 +1,15 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { JsonPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 import { ITunesService } from '../itunes.service';
 import type { Episode } from '../episode';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-episode-select',
-    imports: [RouterLink, JsonPipe, DatePipe],
+    imports: [RouterLink, DatePipe],
     templateUrl: './episode-select.component.html',
     styleUrls: ['./episode-select.component.css']
 })
