@@ -60,5 +60,5 @@ jobs:
         with:
           app-name: 'snipsnop-2'
           slot-name: 'Production'
-          package: .
+          package: ./dist/demo/browser
           
