@@ -17,11 +17,38 @@ export interface User {
 export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   private isInitialized = false;
+  private readonly USER_STORAGE_KEY = 'snipsnop_user';
 
   user$: Observable<User | null> = this.userSubject.asObservable();
 
   constructor() {
+    this.loadUserFromStorage();
     this.initializeGoogleSignIn();
+  }
+
+  private loadUserFromStorage(): void {
+    try {
+      const storedUser = localStorage.getItem(this.USER_STORAGE_KEY);
+      if (storedUser) {
+        const user: User = JSON.parse(storedUser);
+        this.userSubject.next(user);
+      }
+    } catch (error) {
+      console.error('Error loading user from storage:', error);
+      localStorage.removeItem(this.USER_STORAGE_KEY);
+    }
+  }
+
+  private saveUserToStorage(user: User | null): void {
+    try {
+      if (user) {
+        localStorage.setItem(this.USER_STORAGE_KEY, JSON.stringify(user));
+      } else {
+        localStorage.removeItem(this.USER_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Error saving user to storage:', error);
+    }
   }
 
   private async initializeGoogleSignIn(): Promise<void> {
@@ -54,7 +81,7 @@ export class AuthService {
       email: payload.email,
       picture: payload.picture
     };
-    this.userSubject.next(user);
+    this.setUser(user);
   }
 
   async signIn(): Promise<void> {
@@ -89,7 +116,7 @@ export class AuthService {
     if (typeof google !== 'undefined' && google.accounts?.id) {
       google.accounts.id.disableAutoSelect();
     }
-    this.userSubject.next(null);
+    this.setUser(null);
   }
 
   get currentUser(): User | null {
@@ -100,7 +127,8 @@ export class AuthService {
     return this.userSubject.value !== null;
   }
 
-  setUser(user: User): void {
+  setUser(user: User | null): void {
     this.userSubject.next(user);
+    this.saveUserToStorage(user);
   }
 }
