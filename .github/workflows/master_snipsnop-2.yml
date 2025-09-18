@@ -53,3 +53,4 @@ jobs:
           package: ./dist/demo/browser
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8C7F9F8C7BA14ED68BF0DC7FC44590F1 }}
 
+
