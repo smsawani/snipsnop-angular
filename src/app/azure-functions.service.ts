@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
 
 interface SnipData {
   trackId: string;
@@ -28,9 +27,9 @@ export class AzureFunctionsService {
     return this.http.post(`${this.baseUrl}/saveSnip`, snipData);
   }
 
-  deleteSnip(trackId: string): Observable<any> {
+  deleteSnip(snipData: SnipData): Observable<any> {
     return this.http.delete(`${this.baseUrl}/deleteSnip`, {
-      body: { trackId }
+      body: JSON.stringify(snipData)
     });
   }
 }

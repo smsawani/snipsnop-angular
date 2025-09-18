@@ -63,7 +63,7 @@ export class SnipsSavedComponent implements OnInit, OnDestroy {
     snipItems.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
     this.snips = snipItems;
 
-    console.log(JSON.stringify(snipItems));
+    console.log('Loaded snips from localStorage:', snipItems);
 
     // Also load from Azure Function
     this.azureFunctionsService.loadSnips().subscribe({
@@ -79,18 +79,25 @@ export class SnipsSavedComponent implements OnInit, OnDestroy {
 
   deleteSnip(storageKey: string) {
     if (window.confirm('Are you sure you want to delete this snip?')) {
+      const itemToDeleteStr = localStorage.getItem(storageKey);
       localStorage.removeItem(storageKey);
 
       // Also delete from Azure Function
-      const trackId = storageKey.replace('snip_', '');
-      this.azureFunctionsService.deleteSnip(trackId).subscribe({
-        next: (response) => {
-          console.log('Snip deleted from Azure Function:', response);
-        },
-        error: (error) => {
-          console.error('Error deleting snip from Azure Function:', error);
+      if (itemToDeleteStr) {
+        try {
+          const itemToDelete = JSON.parse(itemToDeleteStr);
+          this.azureFunctionsService.deleteSnip(itemToDelete).subscribe({
+            next: (response) => {
+              console.log('Snip deleted from Azure Function:', response);
+            },
+            error: (error) => {
+              console.error('Error deleting snip from Azure Function:', error);
+            }
+          });
+        } catch (error) {
+          console.error('Error parsing snip data for deletion:', error);
         }
-      });
+      }
 
       this.loadSnips();
     }

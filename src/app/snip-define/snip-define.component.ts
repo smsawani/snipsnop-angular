@@ -73,7 +73,12 @@ export class SnipDefineComponent implements OnInit {
 
   handleSave() {
     if (this.trackId && (this.startTime || this.endTime)) {
+
+      var user = JSON.parse(localStorage.getItem(`snipsnop_user`) || "");
+
       const snipData = {
+        id: crypto.randomUUID(),
+        userId: user.email,
         trackId: this.trackId,
         startTime: this.startTime,
         endTime: this.endTime,
@@ -85,10 +90,10 @@ export class SnipDefineComponent implements OnInit {
       // Also save to Azure Function
       this.azureFunctionsService.saveSnip(snipData).subscribe({
         next: (response) => {
-          console.log('Snip saved to Azure Function:', response);
+          console.log(user.email + ' Snip saved to Azure Function:', response);
         },
         error: (error) => {
-          console.error('Error saving snip to Azure Function:', error);
+          console.error(user.email + ' Error saving snip to Azure Function:', error);
         }
       });
 
