@@ -1,45 +1,52 @@
 
 <div class="episodes-page-container">
-  <div *ngIf="loading" class="results-summary">Loading episodes...</div>
-   
-  <div *ngIf="errorMessage" class="error-message">
-    <strong>Error:</strong> {{errorMessage}}
-  </div>
+  @if (loading) {
+    <div class="results-summary">Loading episodes...</div>
+  }
 
-  <div *ngIf="episodes">
-    <div class="episodes-header">
-      <h1>{{episodes.results?.[0]?.collectionName || 'Podcast Episodes'}}</h1>
-      <h2>{{episodes.results?.[0]?.artistName || 'Unknown Artist'}}</h2>
+  @if (errorMessage) {
+    <div class="error-message">
+      <strong>Error:</strong> {{errorMessage}}
     </div>
+  }
 
-    <div class="episodes-list">
-      <div *ngFor="let result of episodes.results.slice(1); let i = index" class="episode-container">
-        <div class="episode-content">
-          <div class="episode-image-wrapper">
-            <a [routerLink]="['/snipdefine', result.trackId]" 
+  @if (episodes) {
+    <div>
+      <div class="episodes-header">
+        <h1>{{episodes.results?.[0]?.collectionName || 'Podcast Episodes'}}</h1>
+        <h2>{{episodes.results?.[0]?.artistName || 'Unknown Artist'}}</h2>
+      </div>
+      <div class="episodes-list">
+        @for (result of episodes.results.slice(1); track result; let i = $index) {
+          <div class="episode-container">
+            <div class="episode-content">
+              <div class="episode-image-wrapper">
+                <a [routerLink]="['/snipdefine', result.trackId]"
                [state]="{ trackId: result.trackId, 
                           episodeUrl: result.episodeUrl,
                           trackName: result.trackName,
                           collectionName: episodes.results?.[0]?.collectionName,
                           artworkUrl: result.artworkUrl600 }">
-               <img class="episodeImage" [src]="result.artworkUrl160" [alt]="result.trackName">
-            </a>
-          </div>
-          <div class="episode-details">
-            <a [routerLink]="['/snipdefine', result.trackId]" 
+                  <img class="episodeImage" [src]="result.artworkUrl160" [alt]="result.trackName">
+                </a>
+              </div>
+              <div class="episode-details">
+                <a [routerLink]="['/snipdefine', result.trackId]"
                [state]="{ trackId: result.trackId, 
                           episodeUrl: result.episodeUrl,
                           trackName: result.trackName,
                           collectionName: episodes.results?.[0]?.collectionName,
                           artworkUrl: result.artworkUrl600 }"
-               class="episode-title-link">
-               <h3 class="episode-title">{{result.trackName}}</h3>
-            </a>
-            <p class="episode-date">{{result.releaseDate | date:'MMM d, y'}}</p>
-            <p class="episode-description">{{result.description}}</p>
+                  class="episode-title-link">
+                  <h3 class="episode-title">{{result.trackName}}</h3>
+                </a>
+                <p class="episode-date">{{result.releaseDate | date:'MMM d, y'}}</p>
+                <p class="episode-description">{{result.description}}</p>
+              </div>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </div>
-  </div>
+  }
 </div>
