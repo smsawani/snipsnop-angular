@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 interface SnipData {
+  id: string;
+  userId: string;
   trackId: string;
   startTime: string;
   endTime: string;

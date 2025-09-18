@@ -4,6 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AzureFunctionsService } from '../azure-functions.service';
 
+interface SnipData {
+  id: string;
+  userId: string;
+  trackId: string;
+  startTime: string;
+  endTime: string;
+  episodeData: any;
+  lastModified: string;
+  storageKey?: string;
+}
+
 @Component({
     selector: 'app-snip-define',
     imports: [CommonModule, FormsModule, RouterModule],
@@ -12,11 +23,13 @@ import { AzureFunctionsService } from '../azure-functions.service';
 })
 export class SnipDefineComponent implements OnInit {
 
+  snipData?: SnipData = undefined;
   episodeData: any = {};
   trackId: string = '';
   startTime: string = '';
   endTime: string = '';
   isSaved: boolean = false;
+  userId: string = JSON.parse(localStorage.getItem(`snipsnop_user`) || "").email;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -24,6 +37,7 @@ export class SnipDefineComponent implements OnInit {
     private azureFunctionsService: AzureFunctionsService
   ) {
     this.episodeData = this.router.currentNavigation()?.extras.state || {};
+    console.log(JSON.stringify(this.episodeData));
   }
 
   ngOnInit() {
@@ -36,31 +50,23 @@ export class SnipDefineComponent implements OnInit {
   }
 
   loadSavedTimes() {
-    const savedData = localStorage.getItem(`snip_${this.trackId}`);
-    if (savedData) {
-      try {
-        const { startTime, endTime } = JSON.parse(savedData);
-        this.startTime = startTime || '';
-        this.endTime = endTime || '';
-        this.isSaved = !!(startTime || endTime);
-      } catch (error) {
-        console.error('Error loading saved snip data:', error);
-      }
-    }
-
-    // Also load from Azure Function
+     // load from Azure Function
     this.azureFunctionsService.loadSnips().subscribe({
       next: (snips) => {
-        const matchingSnip = snips.find(snip => snip.trackId === this.trackId);
+        const matchingSnip = snips.find(snip => snip.trackId === this.trackId && snip.userId === this.userId);
         if (matchingSnip) {
           console.log('Loaded snip from Azure Function:', matchingSnip);
-          // You can choose to use Azure data if it's more recent than localStorage
+          const { startTime, endTime } = matchingSnip;
+          this.startTime = startTime || '';
+          this.endTime = endTime || '';
+          this.isSaved = !!(startTime || endTime);
+          this.snipData = matchingSnip;
         }
       },
       error: (error) => {
         console.error('Error loading snips from Azure Function:', error);
       }
-    });
+    }); 
   }
 
   onStartTimeChange() {
@@ -76,26 +82,48 @@ export class SnipDefineComponent implements OnInit {
 
       var user = JSON.parse(localStorage.getItem(`snipsnop_user`) || "");
 
-      const snipData = {
-        id: crypto.randomUUID(),
-        userId: user.email,
-        trackId: this.trackId,
-        startTime: this.startTime,
-        endTime: this.endTime,
-        episodeData: this.episodeData,
-        lastModified: new Date().toISOString()
-      };
-      localStorage.setItem(`snip_${this.trackId}`, JSON.stringify(snipData));
+      var snipData: SnipData;
+      // if the snip already exists in the database
+      if (this.snipData)
+      {
+        this.snipData.startTime = this.startTime;
+        this.snipData.endTime = this.endTime;
 
-      // Also save to Azure Function
-      this.azureFunctionsService.saveSnip(snipData).subscribe({
-        next: (response) => {
-          console.log(user.email + ' Snip saved to Azure Function:', response);
-        },
-        error: (error) => {
-          console.error(user.email + ' Error saving snip to Azure Function:', error);
-        }
-      });
+        // save to Azure Function
+        this.azureFunctionsService.saveSnip(this.snipData).subscribe({
+          next: (response) => {
+            console.log(user.email + ' Snip UPDATED to Azure Function:', response);
+          },
+          error: (error) => {
+            console.error(user.email + ' Error UPDATED snip to Azure Function:', error);
+          }
+        });
+      }
+      else
+      {
+        snipData = {
+          id: crypto.randomUUID(),
+          userId: user.email,
+          trackId: this.trackId,
+          startTime: this.startTime,
+          endTime: this.endTime,
+          episodeData: this.episodeData,
+          lastModified: new Date().toISOString()
+        };
+
+        // save to Azure Function
+        this.azureFunctionsService.saveSnip(snipData).subscribe({
+          next: (response) => {
+            console.log(user.email + ' Snip saved to Azure Function:', response);
+          },
+          error: (error) => {
+            console.error(user.email + ' Error saving snip to Azure Function:', error);
+          }
+        });
+      }
+      
+      
+      
 
       this.isSaved = true;
     }
