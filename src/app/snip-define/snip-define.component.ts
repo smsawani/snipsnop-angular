@@ -2,6 +2,7 @@ import { Component, type OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { AzureFunctionsService } from '../azure-functions.service';
 
 @Component({
     selector: 'app-snip-define',
@@ -19,8 +20,9 @@ export class SnipDefineComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) { 
+    private router: Router,
+    private azureFunctionsService: AzureFunctionsService
+  ) {
     this.episodeData = this.router.currentNavigation()?.extras.state || {};
   }
 
@@ -45,6 +47,20 @@ export class SnipDefineComponent implements OnInit {
         console.error('Error loading saved snip data:', error);
       }
     }
+
+    // Also load from Azure Function
+    this.azureFunctionsService.loadSnips().subscribe({
+      next: (snips) => {
+        const matchingSnip = snips.find(snip => snip.trackId === this.trackId);
+        if (matchingSnip) {
+          console.log('Loaded snip from Azure Function:', matchingSnip);
+          // You can choose to use Azure data if it's more recent than localStorage
+        }
+      },
+      error: (error) => {
+        console.error('Error loading snips from Azure Function:', error);
+      }
+    });
   }
 
   onStartTimeChange() {
@@ -58,12 +74,24 @@ export class SnipDefineComponent implements OnInit {
   handleSave() {
     if (this.trackId && (this.startTime || this.endTime)) {
       const snipData = {
+        trackId: this.trackId,
         startTime: this.startTime,
         endTime: this.endTime,
         episodeData: this.episodeData,
         lastModified: new Date().toISOString()
       };
       localStorage.setItem(`snip_${this.trackId}`, JSON.stringify(snipData));
+
+      // Also save to Azure Function
+      this.azureFunctionsService.saveSnip(snipData).subscribe({
+        next: (response) => {
+          console.log('Snip saved to Azure Function:', response);
+        },
+        error: (error) => {
+          console.error('Error saving snip to Azure Function:', error);
+        }
+      });
+
       this.isSaved = true;
     }
   }

@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, type OnInit, type OnDestroy } from '@angular/core';
 
 import { RouterModule } from '@angular/router';
+import { AzureFunctionsService } from '../azure-functions.service';
 
 interface SnipData {
   trackId: string;
@@ -25,6 +26,8 @@ export class SnipsSavedComponent implements OnInit, OnDestroy {
   currentTime: number = 0;
   private timeUpdateInterval: any = null;
 
+  constructor(private azureFunctionsService: AzureFunctionsService) {}
+
   ngOnInit() {
     this.loadSnips();
   }
@@ -37,15 +40,15 @@ export class SnipsSavedComponent implements OnInit, OnDestroy {
 
   loadSnips() {
     const snipItems: SnipData[] = [];
-    
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      
+
       if (key && key.startsWith('snip_')) {
         try {
           const data = JSON.parse(localStorage.getItem(key) || '{}');
           const trackId = key.replace('snip_', '');
-          
+
           snipItems.push({
             trackId,
             ...data,
@@ -56,14 +59,39 @@ export class SnipsSavedComponent implements OnInit, OnDestroy {
         }
       }
     }
-    
+
     snipItems.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
     this.snips = snipItems;
+
+    console.log(JSON.stringify(snipItems));
+
+    // Also load from Azure Function
+    this.azureFunctionsService.loadSnips().subscribe({
+      next: (azureSnips) => {
+        console.log('Loaded snips from Azure Function:', azureSnips);
+        // You can merge or compare with localStorage data here if needed
+      },
+      error: (error) => {
+        console.error('Error loading snips from Azure Function:', error);
+      }
+    });
   }
 
   deleteSnip(storageKey: string) {
     if (window.confirm('Are you sure you want to delete this snip?')) {
       localStorage.removeItem(storageKey);
+
+      // Also delete from Azure Function
+      const trackId = storageKey.replace('snip_', '');
+      this.azureFunctionsService.deleteSnip(trackId).subscribe({
+        next: (response) => {
+          console.log('Snip deleted from Azure Function:', response);
+        },
+        error: (error) => {
+          console.error('Error deleting snip from Azure Function:', error);
+        }
+      });
+
       this.loadSnips();
     }
   }
